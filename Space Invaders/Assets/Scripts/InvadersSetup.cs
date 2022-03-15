@@ -14,6 +14,7 @@ public class InvadersSetup : MonoBehaviour
     public ScoreCapture score;
 
     private Aliens aliens;
+    public AudioClip pewpew;
 
     public Shooting missilePrefab;
 
@@ -94,8 +95,11 @@ public class InvadersSetup : MonoBehaviour
                 continue;
             }
 
-            if (Random.value < (1.0f / (float) this.stillAlive))
+            if (Random.value < (10f / (float) this.stillAlive))
             {
+                AudioSource audioSource = this.gameObject.GetComponent<AudioSource>();
+                audioSource.clip = pewpew;
+                audioSource.Play();
                 Instantiate(this.missilePrefab, aliens.position, Quaternion.identity);
                 break;
             }

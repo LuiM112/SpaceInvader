@@ -6,58 +6,47 @@ using UnityEngine;
 
 public class Aliens : MonoBehaviour
 {
-    public Sprite[] animationSprites;
-
-    public float animationTime;
     public System.Action killed;
-    private SpriteRenderer spriteRenderer;
     private int animationFrame;
-    public GameObject[] AliensPrefab;
     public int ScoreCount = 0;
+    private Animator animComp;
+    private float timer = 0f;
+    public AudioClip gone;
 
-    private void Awake()
+    private void Update()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    private void Start()
-    {
-        InvokeRepeating(nameof(AnimateSprite), this.animationTime, this.animationTime);
-    }
-
-    private void AnimateSprite()
-    {
-        animationFrame++;
-
-        if (animationFrame >= this.animationSprites.Length)
-        {
-            animationFrame = 0;
-        }
-
-        spriteRenderer.sprite = this.animationSprites[animationFrame];
+        timer += Time.deltaTime;
     }
 
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer == LayerMask.NameToLayer("Laser"))
         {
+            AudioSource audioSource = this.gameObject.GetComponent<AudioSource>();
+            audioSource.clip = gone;
+            audioSource.Play();
+            
             this.killed.Invoke();
+            timer = 0f;
             if (this.gameObject.tag.Equals("Alien1"))
             {
                 ScoreCount += 30;
                 Debug.Log(ScoreCount);
+                this.gameObject.GetComponent<Animator>().SetBool("Hit", true);
             }
             else if (this.gameObject.tag.Equals("Alien2"))
             {
                 ScoreCount += 20;
                 Debug.Log(ScoreCount);
+                this.gameObject.GetComponent<Animator>().SetBool("Hit", true);
             }
             else if (this.gameObject.tag.Equals("Alien3"))
             {
                 ScoreCount += 10;
                 Debug.Log(ScoreCount);
+                this.gameObject.GetComponent<Animator>().SetBool("Hit", true);
             }
-            this.gameObject.SetActive(false);
+            Destroy(this.gameObject, 1);
             
         }
     }
